@@ -5,7 +5,7 @@ edition = "2021"
 license = "MIT"
 description = "Fail-closed systemd-logind session resolve and inhibitor RAII"
 repository = "https://github.com/MasonRhodesDev/hypr-logind"
-publish = false
+publish = true
 
 [dependencies]
 libc = "0.2"

@@ -12,9 +12,9 @@ The manager object path `/org/freedesktop/login1` is never a session path. There
 
 `Inhibitor` holds the logind inhibit fd. Drop releases it. Callers pass `who` (canonical executable/service identity).
 
-This public repo exists so packaged tools can git-depend on the crate.
-hypr-commons is private. crates.io publish waits on a registry token.
+Published from CI on a `v*` tag (`CARGO_REGISTRY_TOKEN` org secret). Do not
+`cargo publish` from a laptop.
 
 ```toml
-hypr-logind = { git = "https://github.com/MasonRhodesDev/hypr-logind", rev = "<sha>" }
+hypr-logind = "0.1.0"
 ```
