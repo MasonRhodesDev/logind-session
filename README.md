@@ -1,6 +1,6 @@
-# hypr-logind
+# logind-session
 
-Fail-closed systemd-logind session resolve and inhibitor RAII for the hypr suite.
+Fail-closed systemd-logind session resolve and inhibitor RAII.
 
 Session resolution order:
 
@@ -16,5 +16,5 @@ Published from CI on a `v*` tag (`CARGO_REGISTRY_TOKEN` org secret). Do not
 `cargo publish` from a laptop.
 
 ```toml
-hypr-logind = "0.1.0"
+logind-session = "0.2.0"
 ```
