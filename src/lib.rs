@@ -11,13 +11,13 @@ use std::env;
 use std::ffi::OsString;
 use std::fmt;
 
-use zbus::zvariant::OwnedObjectPath;
 use zbus::Connection;
+use zbus::OwnedObjectPath;
 
 mod proxies;
 
 pub use proxies::{LogindManagerProxy, LogindSessionProxy};
-pub use zbus::zvariant::OwnedFd;
+pub use zbus::OwnedFd;
 
 /// logind Manager object path. Never a session.
 pub const MANAGER_PATH: &str = "/org/freedesktop/login1";
@@ -86,7 +86,7 @@ impl SessionRef {
 
     pub async fn proxy<'a>(&self, conn: &'a Connection) -> Result<LogindSessionProxy<'a>, Error> {
         Ok(LogindSessionProxy::builder(conn)
-            .path(self.path.clone())?
+            .path(self.path.clone())
             .build()
             .await?)
     }
@@ -202,7 +202,7 @@ pub async fn resolve_session_with(
             continue;
         }
         let Ok(proxy) = LogindSessionProxy::builder(conn)
-            .path(path.clone())?
+            .path(path.clone())
             .build()
             .await
         else {
@@ -229,7 +229,7 @@ pub async fn resolve_session_with(
 async fn session_from_path(conn: &Connection, path: OwnedObjectPath) -> Result<SessionRef, Error> {
     reject_manager_path(&path)?;
     let proxy = LogindSessionProxy::builder(conn)
-        .path(path.clone())?
+        .path(path.clone())
         .build()
         .await?;
     let id = proxy.id().await?;
