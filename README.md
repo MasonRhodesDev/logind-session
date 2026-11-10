@@ -16,5 +16,5 @@ Published from CI on a `v*` tag (`CARGO_REGISTRY_TOKEN` org secret). Do not
 `cargo publish` from a laptop.
 
 ```toml
-logind-session = "0.2.0"
+logind-session = "0.3.0"
 ```

@@ -6,26 +6,20 @@ use zbus::proxy;
     default_path = "/org/freedesktop/login1"
 )]
 pub trait LogindManager {
-    fn inhibit(
-        &self,
-        what: &str,
-        who: &str,
-        why: &str,
-        mode: &str,
-    ) -> zbus::Result<zbus::zvariant::OwnedFd>;
+    fn inhibit(&self, what: &str, who: &str, why: &str, mode: &str) -> zbus::Result<zbus::OwnedFd>;
 
     fn suspend(&self, interactive: bool) -> zbus::Result<()>;
 
     fn list_inhibitors(&self) -> zbus::Result<Vec<(String, String, String, String, u32, u32)>>;
 
-    fn get_session_by_pid(&self, pid: u32) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn get_session_by_pid(&self, pid: u32) -> zbus::Result<zbus::OwnedObjectPath>;
 
-    fn get_session(&self, session_id: &str) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn get_session(&self, session_id: &str) -> zbus::Result<zbus::OwnedObjectPath>;
 
     /// a(susso): (id, uid, user, seat, path).
     fn list_sessions(
         &self,
-    ) -> zbus::Result<Vec<(String, u32, String, String, zbus::zvariant::OwnedObjectPath)>>;
+    ) -> zbus::Result<Vec<(String, u32, String, String, zbus::OwnedObjectPath)>>;
 
     #[zbus(property)]
     fn lid_closed(&self) -> zbus::Result<bool>;
