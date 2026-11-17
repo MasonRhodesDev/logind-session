@@ -16,7 +16,6 @@ pub trait LogindManager {
 
     fn get_session(&self, session_id: &str) -> zbus::Result<zbus::OwnedObjectPath>;
 
-    /// a(susso): (id, uid, user, seat, path).
     fn list_sessions(
         &self,
     ) -> zbus::Result<Vec<(String, u32, String, String, zbus::OwnedObjectPath)>>;
