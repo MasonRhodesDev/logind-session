@@ -1,12 +1,3 @@
-//! Fail-closed systemd-logind session resolve and inhibitor RAII.
-//!
-//! Session resolution order:
-//! 1. `GetSessionByPID` (pid `0` = calling process)
-//! 2. `GetSession($XDG_SESSION_ID)` when that variable is set and non-empty
-//! 3. `ListSessions` scored for the calling uid
-//!
-//! The manager object path `/org/freedesktop/login1` is never a session path.
-
 use std::env;
 use std::ffi::OsString;
 use std::fmt;
@@ -19,10 +10,8 @@ mod proxies;
 pub use proxies::{LogindManagerProxy, LogindSessionProxy};
 pub use zbus::OwnedFd;
 
-/// logind Manager object path. Never a session.
 pub const MANAGER_PATH: &str = "/org/freedesktop/login1";
 
-/// Why a session or inhibitor could not be resolved.
 #[derive(Debug)]
 pub enum Error {
     Dbus(zbus::Error),
@@ -68,7 +57,6 @@ impl From<zbus::Error> for Error {
     }
 }
 
-/// Resolved logind session. `path` is never the manager object.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SessionRef {
     id: String,
@@ -92,7 +80,6 @@ impl SessionRef {
     }
 }
 
-/// Holding the fd keeps the logind inhibit active. Drop releases it.
 pub struct Inhibitor {
     _fd: OwnedFd,
 }
@@ -110,12 +97,10 @@ impl Inhibitor {
     }
 }
 
-/// `XDG_SESSION_ID` from the process environment. Empty is an error.
 pub fn session_id_from_env() -> Result<String, Error> {
     session_id_from_os_var(env::var_os("XDG_SESSION_ID"))
 }
 
-/// `XDG_SESSION_ID` from an explicit value. Used by tests.
 pub fn session_id_from_os_var(value: Option<OsString>) -> Result<String, Error> {
     let Some(value) = value else {
         return Err(Error::MissingSessionId);
@@ -130,9 +115,6 @@ pub fn is_graphical_type(session_type: &str) -> bool {
     matches!(session_type, "wayland" | "x11" | "mir")
 }
 
-/// Score a ListSessions candidate. Higher wins.
-///
-/// class=user +1, graphical type +2, active +4 / online +1.
 pub fn score_session(class: &str, session_type: &str, state: &str) -> i32 {
     let mut score = 0;
     if class == "user" {
@@ -156,13 +138,11 @@ pub fn reject_manager_path(path: &OwnedObjectPath) -> Result<(), Error> {
     Ok(())
 }
 
-/// Resolve the calling process's session. Does not require a graphical type.
 pub async fn resolve_session(conn: &Connection) -> Result<SessionRef, Error> {
     let manager = LogindManagerProxy::new(conn).await?;
     resolve_session_with(conn, &manager, 0).await
 }
 
-/// Resolve and require wayland/x11/mir.
 pub async fn resolve_graphical_session(conn: &Connection) -> Result<SessionRef, Error> {
     let session = resolve_session(conn).await?;
     let proxy = session.proxy(conn).await?;
